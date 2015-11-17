@@ -1,0 +1,150 @@
+$testBorder: 1px solid white;
+$cloudwhite: #ecf0f1;
+$darkblue:#182538;
+$ourGreen:#2DB069;
+$ourRed:#E94835;
+$darkergrey:#bdc3c7;
+
+/******************************************
+                  OVERALL
+******************************************/
+
+
+body{
+  background-color:$darkblue;
+}
+
+
+/******************************************
+                  HEADER
+******************************************/
+header{
+  text-align: center;
+  color:$cloudwhite;
+  margin-bottom:50px;
+  h1{
+    font-size:5em;
+  }
+}
+
+
+
+
+/******************************************
+              MOVIE CONTENT
+******************************************/
+.mvcontent{
+  padding-right:0;
+}
+
+.movieContainer {
+  margin-top: 10px;
+  padding:0;
+  background-color: $cloudwhite;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  img{
+    width: 100%;
+  }
+}
+.movieupper{
+  margin:0;
+  padding:0;
+  border-top-left-radius: 10px;
+  background-color: $darkergrey;
+}
+
+
+.movieCover{
+ border-right: $testBorder;
+ padding:15px;
+ border-top-left-radius: 10px;
+ background-color: $cloudwhite;
+}
+
+.movieInfo{
+  background-color:$darkblue;
+  margin:0;
+  padding:0;
+  .movieTitle{
+    background-color: $ourGreen;
+    border-bottom:$cloudwhite;
+    text-align: center;
+    border-top-right-radius: 10px;
+
+  }
+  h2 {
+    text-align: center;
+    color:white;
+    display:inline-block;
+  }
+  span{
+    margin-left:10px;
+    font-style: italic;
+    font-size: .8em;
+    color:$cloudwhite;
+    font-family: cursive;
+  }
+  .moviePlot{
+    padding:10px 15px;
+    background-color:$darkergrey;
+  }
+}
+.movieFoot{
+  width:100%;
+  vertical-align: bottom;
+  padding:0;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  background-color: $darkergrey;
+  .movieRating{
+    font-size: 1.3em;
+    text-align: center;
+    height: 38px;
+    border-right: $testBorder;
+    border-bottom-left-radius: 4px;
+    background-color:$cloudwhite;
+  }
+  .delete{
+      float:right;
+      margin:2px;
+  }
+}
+
+
+/******************************************
+                  FORM
+******************************************/
+form{
+  background-color:$ourRed;
+  padding:5px 15px;
+  margin-top:10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  .inpPlot{
+    margin: 5px auto;
+    padding: 1px;
+    width: 90%;
+    display: block;
+  }
+}
+input{
+  display: block;
+  margin: 10px auto;
+  width: 90%;
+
+}
+.submit{
+  margin: 0 auto;
+  display: block;
+}
+
+/******************************************
+              FOOTER
+******************************************/
+footer{
+  height:50px;
+}

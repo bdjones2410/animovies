@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>imdb</title>
+    <link rel="stylesheet" href="">
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+    rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script type="text/html" id="animovies">
+
+      <div class="col-md-12 movieupper">
+          <div class="col-md-3 movieCover"><img alt="" src=
+          "<%=attributes.cover%>">
+          </div>
+          <div class="col-md-9 movieInfo">
+              <div class="movieTitle">
+                  <h2><%= attributes.title %>
+                  </h2>
+                  <span><%=attributes.mvDate%></span>
+              </div>
+
+
+              <div class="moviePlot">
+                  <p><%=attributes.plot%>
+                  </p>
+              </div>
+          </div>
+      </div>
+      <div class="col-md-12 movieFoot">
+          <div class="col-md-3 movieRating">
+              <%=attributes.rating%>/10
+          </div>
+          <button class="delete btn btn-danger"  id="<%=attributes._id%>">Delete</button>
+      </div>
+
+    </script>
+  </head>
+  <body>
+      <header>
+      <h1>ANIMOVIES</h1>
+      </header>
+    
+      <section class="content">
+          <div class="col-md-8 mvcontent" id="mvattach">
+
+          </div>
+
+          <div class="col-md-4">
+            <form action="">
+              <input type="cover" placeholder="cover image">
+              <input type="title" placeholder="title">
+              <input type="mvdate" placeholder="release year">
+              <input type="rate" placeholder="rating out of 10">
+              <textarea name="plot" class="inpPlot" rows="8" cols="40" placeholder="plot"></textarea>
+              <button type="submit" class="btn btn-primary submit">Submit</button>
+            </form>
+          </div>
+
+
+      </section>
+
+      <footer class="col-md-12">
+
+      </footer>
+
+
+
+    <script src="bundle.js" charset="utf-8" placeholder=""></script>
+  </body>
+</html>
