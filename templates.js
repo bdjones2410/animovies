@@ -26,7 +26,7 @@ module.exports= {
       '<form action="" class="userinput">',
       '<input type="usersRate" class="userScore" name="userScore" placeholder="rate on 1 - 10">',
       '</form>',
-      '<button class="usersub btn btn-primary">Submit</button>',
+      '<button class="usersub btn btn-primary">Rate</button>',
       '<button class="delete btn btn-danger"  id="<%=_id%>">Delete</button>',
       '</div>'
     ].join(''),
