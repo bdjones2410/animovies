@@ -10,8 +10,9 @@ module.exports = Backbone.View.extend({
   el: '.content',
   //events
   events:{
-    'click .submit': 'submitting',
-    'click .delete': 'deleteMe'
+    // 'click .submit': 'submitting',
+    'click .delete': 'deleteMe',
+    'click .usersub': 'newrate',
   },
     //delete event
     deleteMe:function(e){
@@ -21,26 +22,16 @@ module.exports = Backbone.View.extend({
       badMove.destroy();
     },
 
-
-
-
-    //submit event
-    submitting: function(e){
+    newrate: function(e){
       e.preventDefault();
-      var newMovie = {
-        cover:this.$el.find('input[type="cover"]').val(),
-        title:this.$el.find('input[type="title"]').val(),
-        rating:this.$el.find('input[type="rate"]').val(),
-        plot:this.$el.find('textarea[name="plot"]').val(),
-        mvDate:this.$el.find('input[type="mvdate"]').val(),
-      };
-      this.$el.find('input').val('');
-      this.$el.find('textarea').val('');
-      var newModel = new MovieModel(newMovie);
-      newModel.save();
-      this.collection.add(newModel);
-      this.addOne(newModel);
+      var ourID = $(e.target).siblings('.delete').attr('id');
+      var updateMod = this.collection.get(ourID);
+      var newRate = $(e.target).siblings('form').children('input[name="userScore"]').val();
+      updateMod.set({rating: newRate});
+      updateMod.save();
+      this.$el.find('input[type="usersRate"]').val('');
     },
+
   //addOne
   addOne:function(movieModel){
     var modelView = new MovieModelView({model: movieModel});

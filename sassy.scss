@@ -113,6 +113,7 @@ header{
 }
 
 
+
 /******************************************
                   FORM
 ******************************************/
@@ -140,6 +141,15 @@ input{
 .submit{
   margin: 0 auto;
   display: block;
+}
+.userinput{
+  display:inline-block;
+  background:none;
+  margin:0;
+  padding:0;
+}
+.userScore{
+  margin: 0 5px;
 }
 
 /******************************************

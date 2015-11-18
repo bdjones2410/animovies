@@ -1,18 +1,64 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var Backbone = require('backbone');
+var _ = require('underscore');
 var $ = require('jquery');
-var MovieCollection = require('./moviecollection');
-var MovieCollectionView = require('./moviecollectionview');
+Backbone.$=$;
+var tmpl = require('./templates');
+var MovieModel = require('./moviemodel');
 
-$(function(){
+module.exports = Backbone.View.extend({
 
-  var movies = new MovieCollection();
+  className:'col-md-4',
 
-  movies.fetch().then(function(data){
+  events:{
+    'click .submit': 'submitting',
+  },
 
-    new MovieCollectionView({collection: movies});
+  submitting: function(e){
+    e.preventDefault();
+    var newMovie = {
+      cover:this.$el.find('input[type="cover"]').val(),
+      title:this.$el.find('input[type="title"]').val(),
+      rating:this.$el.find('input[type="rate"]').val(),
+      plot:this.$el.find('textarea[name="plot"]').val(),
+      mvDate:this.$el.find('input[type="mvdate"]').val(),
+    };
+    this.$el.find('input').val('');
+    this.$el.find('textarea').val('');
+    var newModel = new MovieModel(newMovie);
+    newModel.save();
+    this.collection.add(newModel);
+    this.addOne(newModel);
+  },
+  template: _.template(tmpl.forms),
 
-  });
+  render: function(){
+    var ourHTML = this.template(this.model);
+    this.$el.html(ourHTML);
+    return this;
+  }
 
+
+
+
+});
+
+},{"./moviemodel":7,"./templates":12,"backbone":9,"jquery":10,"underscore":11}],2:[function(require,module,exports){
+var Backbone = require('backbone');
+var _ = require('underscore');
+var $ = require('jquery');
+Backbone.$=$;
+var tmpl = require('./templates');
+
+module.exports = Backbone.View.extend({
+  initialize: function(){},
+  template: _.template(tmpl.headerTmp),
+  render: function(){
+    var ourHTML = this.template(this.model);
+    this.$el.html(ourHTML);
+    return this;
+
+  }
 
 
 
@@ -20,7 +66,51 @@ $(function(){
 
 });
 
-},{"./moviecollection":2,"./moviecollectionview":3,"jquery":7}],2:[function(require,module,exports){
+},{"./templates":12,"backbone":9,"jquery":10,"underscore":11}],3:[function(require,module,exports){
+var Backbone = require('backbone');
+var $ = require('jquery');
+Backbone.$ = $;
+var HeaderView = require('./headerView');
+var FormView = require('./formView');
+var MovieCollection = require('./moviecollection');
+var MovieCollectionView = require('./moviecollectionview');
+
+module.exports = Backbone.View.extend({
+  el: '.content',
+  initialize: function(){
+    var self = this;
+    var headerHTML = new HeaderView();
+    var formHTML = new FormView();
+    var movies = new MovieCollection();
+    movies.fetch().then(function(data){
+      new MovieCollectionView({collection: movies});
+      self.$el.find('header').html(headerHTML.render().el);
+      self.$el.find('#formattach').html(formHTML.render().el);
+    });
+
+
+
+
+
+  }
+
+
+
+});
+
+},{"./formView":1,"./headerView":2,"./moviecollection":5,"./moviecollectionview":6,"backbone":9,"jquery":10}],4:[function(require,module,exports){
+var $ = require('jquery');
+var LayoutView = require('./layoutView');
+
+$(function(){
+
+new LayoutView();
+
+
+
+});
+
+},{"./layoutView":3,"jquery":10}],5:[function(require,module,exports){
 var Backbone = require('backbone');
 var movieModel = require('./moviemodel');
 
@@ -31,7 +121,7 @@ module.exports = Backbone.Collection.extend({
 
 });
 
-},{"./moviemodel":4,"backbone":6}],3:[function(require,module,exports){
+},{"./moviemodel":7,"backbone":9}],6:[function(require,module,exports){
 var Backbone = require('backbone');
 var $ = require('jquery');
 var _ = require('underscore');
@@ -44,8 +134,9 @@ module.exports = Backbone.View.extend({
   el: '.content',
   //events
   events:{
-    'click .submit': 'submitting',
-    'click .delete': 'deleteMe'
+    // 'click .submit': 'submitting',
+    'click .delete': 'deleteMe',
+    'click .usersub': 'newrate',
   },
     //delete event
     deleteMe:function(e){
@@ -55,26 +146,16 @@ module.exports = Backbone.View.extend({
       badMove.destroy();
     },
 
-
-
-
-    //submit event
-    submitting: function(e){
+    newrate: function(e){
       e.preventDefault();
-      var newMovie = {
-        cover:this.$el.find('input[type="cover"]').val(),
-        title:this.$el.find('input[type="title"]').val(),
-        rating:this.$el.find('input[type="rate"]').val(),
-        plot:this.$el.find('textarea[name="plot"]').val(),
-        mvDate:this.$el.find('input[type="mvdate"]').val(),
-      };
-      this.$el.find('input').val('');
-      this.$el.find('textarea').val('');
-      var newModel = new MovieModel(newMovie);
-      newModel.save();
-      this.collection.add(newModel);
-      this.addOne(newModel);
+      var ourID = $(e.target).siblings('.delete').attr('id');
+      var updateMod = this.collection.get(ourID);
+      var newRate = $(e.target).siblings('form').children('input[name="userScore"]').val();
+      updateMod.set({rating: newRate});
+      updateMod.save();
+      this.$el.find('input[type="usersRate"]').val('');
     },
+
   //addOne
   addOne:function(movieModel){
     var modelView = new MovieModelView({model: movieModel});
@@ -93,10 +174,10 @@ module.exports = Backbone.View.extend({
 
 });
 
-},{"./moviemodel":4,"./moviemodelview":5,"backbone":6,"jquery":7,"underscore":8}],4:[function(require,module,exports){
+},{"./moviemodel":7,"./moviemodelview":8,"backbone":9,"jquery":10,"underscore":11}],7:[function(require,module,exports){
 var Backbone = require('backbone');
 
-//re-write how rating functions to always display average rating instead of actual rating.   change input field to pass initial rating set into array.
+
 
 
 module.exports = Backbone.Model.extend({
@@ -117,51 +198,47 @@ module.exports = Backbone.Model.extend({
       plot: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
       //releasedate
       mvDate:'Timeless',
-
           //array of ratings
-
-      //ratingsArr: [],
-
+      ratingsArr: [],
           // function to push new ratings
+      addRating: function(el){ var newrate = Math.round(el*10)/10;
+                 if(newrate < 11 && newrate >= 0){
+                 this.ratingsArr.push(newrate);
+               }
+                 else if (newrate > 10){
+                   this.ratingsArr.push(10);
+                 }
+                 else if (newrate < 0){
+                   this.ratingsArr.push(0);
+                 }
 
-      // addRating: function(el){ var newrate = Math.round(el);
-      //            if(newrate <= 10 && newrate >= 0){
-      //            this.ratingsArr.push(newrate);
-      //          }
-      //            else if (newrate > 10){
-      //              this.ratingsArr.push(10);
-      //            }
-      //            else if (newrate < 0){
-      //              this.ratingsArr.push(0);
-      //            }
-      //
-      //  },
-
+       },
             //function to return average rating, change name to be rating.
-
-      //avgRating: function(){
-      //  var sum = 0;
-      //  for(i = 0; i < this.ratingsArr.length; i++){
-      //  sum += ratingsArr[i];
-      //}
-      // var avg = sum / this.ratingsArr.length;
-      // return avg;
-      //}
+      avgRating: function(){
+        var newRate = this.rating;
+        this.addRating(newRate);
+        var sum = 0;
+           for(i = 0; i < this.ratingsArr.length; i++){
+           sum += this.ratingsArr[i];
+          }
+        var avg = sum / this.ratingsArr.length;
+          return Math.round(avg*10)/10;
+          }
 
     },
       initialize: function(){
-        // sets rating to be the return from avg.
-      //  this.rating = this.avgRating();
+
       }
 
 
 });
 
-},{"backbone":6}],5:[function(require,module,exports){
+},{"backbone":9}],8:[function(require,module,exports){
 // col-md-12 movieContainer
 var Backbone = require('backbone');
 var _ = require('underscore');
 var $ = require('jquery');
+var tmpl = require('./templates');
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
@@ -171,11 +248,10 @@ module.exports = Backbone.View.extend({
   //classes
   className: 'col-md-12 movieContainer',
   //template
-  template: _.template($('#animovies').html()),
+  template: _.template(tmpl.animovies),
   //render
   render: function(){
-    var ourHTML = this.template(this.model);
-    console.log(this.model);
+    var ourHTML = this.template(this.model.toJSON());
     this.$el.html(ourHTML);
     return this;
   },
@@ -187,7 +263,7 @@ module.exports = Backbone.View.extend({
 
 });
 
-},{"backbone":6,"jquery":7,"underscore":8}],6:[function(require,module,exports){
+},{"./templates":12,"backbone":9,"jquery":10,"underscore":11}],9:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
@@ -2085,7 +2161,7 @@ module.exports = Backbone.View.extend({
 }));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":7,"underscore":8}],7:[function(require,module,exports){
+},{"jquery":10,"underscore":11}],10:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -11297,7 +11373,7 @@ return jQuery;
 
 }));
 
-},{}],8:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -12847,4 +12923,72 @@ return jQuery;
   }
 }.call(this));
 
-},{}]},{},[1]);
+},{}],12:[function(require,module,exports){
+module.exports= {
+
+
+
+  animovies:[
+      '<div class="col-md-12 movieupper">',
+      '<div class="col-md-3 movieCover"><img alt="" src=',
+      '"<%=cover%>">',
+      '</div>',
+      '<div class="col-md-9 movieInfo">',
+      '<div class="movieTitle">',
+      '<h2><%=title %>',
+      '</h2>',
+      '<span><%=mvDate%></span>',
+      '</div>',
+      '<div class="moviePlot">',
+      '<p><%=plot%>',
+      '</p>',
+      '</div>',
+      '</div>',
+      '</div>',
+      '<div class="col-md-12 movieFoot">',
+      '<div class="col-md-3 movieRating">',
+      '<%=avgRating()%>/10',
+      '</div>',
+      '<form action="" class="userinput">',
+      '<input type="usersRate" class="userScore" name="userScore" placeholder="rate on 1 - 10">',
+      '</form>',
+      '<button class="usersub btn btn-primary">Submit</button>',
+      '<button class="delete btn btn-danger"  id="<%=_id%>">Delete</button>',
+      '</div>'
+    ].join(''),
+
+  forms:[
+    '<form action="">',
+    '<input type="cover" placeholder="cover image">',
+    '<input type="title" placeholder="title">',
+    '<input type="mvdate" placeholder="release year">',
+    '<input type="rate" placeholder="rating out of 10">',
+    '<textarea name="plot" class="inpPlot" rows="8" cols="40" placeholder="plot"></textarea>',
+    '<button type="submit" class="btn btn-primary submit">Submit</button>',
+    '</form>',
+  ].join(''),
+
+  headerTmp:[
+    '<h1>ANIMOVIES</h1>'
+  ].join(''),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+};
+
+},{}]},{},[4]);

@@ -1,6 +1,6 @@
 var Backbone = require('backbone');
 
-//re-write how rating functions to always display average rating instead of actual rating.   change input field to pass initial rating set into array.
+
 
 
 module.exports = Backbone.Model.extend({
@@ -21,41 +21,36 @@ module.exports = Backbone.Model.extend({
       plot: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
       //releasedate
       mvDate:'Timeless',
-
           //array of ratings
-
-      //ratingsArr: [],
-
+      ratingsArr: [],
           // function to push new ratings
+      addRating: function(el){ var newrate = Math.round(el*10)/10;
+                 if(newrate < 11 && newrate >= 0){
+                 this.ratingsArr.push(newrate);
+               }
+                 else if (newrate > 10){
+                   this.ratingsArr.push(10);
+                 }
+                 else if (newrate < 0){
+                   this.ratingsArr.push(0);
+                 }
 
-      // addRating: function(el){ var newrate = Math.round(el);
-      //            if(newrate <= 10 && newrate >= 0){
-      //            this.ratingsArr.push(newrate);
-      //          }
-      //            else if (newrate > 10){
-      //              this.ratingsArr.push(10);
-      //            }
-      //            else if (newrate < 0){
-      //              this.ratingsArr.push(0);
-      //            }
-      //
-      //  },
-
+       },
             //function to return average rating, change name to be rating.
-
-      //avgRating: function(){
-      //  var sum = 0;
-      //  for(i = 0; i < this.ratingsArr.length; i++){
-      //  sum += ratingsArr[i];
-      //}
-      // var avg = sum / this.ratingsArr.length;
-      // return avg;
-      //}
+      avgRating: function(){
+        var newRate = this.rating;
+        this.addRating(newRate);
+        var sum = 0;
+           for(i = 0; i < this.ratingsArr.length; i++){
+           sum += this.ratingsArr[i];
+          }
+        var avg = sum / this.ratingsArr.length;
+          return Math.round(avg*10)/10;
+          }
 
     },
       initialize: function(){
-        // sets rating to be the return from avg.
-      //  this.rating = this.avgRating();
+
       }
 
 
