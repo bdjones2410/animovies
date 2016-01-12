@@ -26,8 +26,8 @@ module.exports = Backbone.View.extend({
     this.$el.find('textarea').val('');
     var newModel = new MovieModel(newMovie);
     newModel.save();
-    this.collection.add(newModel);
-    this.addOne(newModel);
+    this.collection.unshift(newModel);
+
   },
   template: _.template(tmpl.forms),
 

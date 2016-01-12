@@ -11,10 +11,11 @@ module.exports = Backbone.View.extend({
   initialize: function(){
     var self = this;
     var headerHTML = new HeaderView();
-    var formHTML = new FormView();
+
     var movies = new MovieCollection();
     movies.fetch().then(function(data){
       new MovieCollectionView({collection: movies});
+      var formHTML = new FormView({collection: movies});
       self.$el.find('header').html(headerHTML.render().el);
       self.$el.find('#formattach').html(formHTML.render().el);
     });

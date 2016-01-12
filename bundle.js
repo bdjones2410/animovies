@@ -27,8 +27,8 @@ module.exports = Backbone.View.extend({
     this.$el.find('textarea').val('');
     var newModel = new MovieModel(newMovie);
     newModel.save();
-    this.collection.add(newModel);
-    this.addOne(newModel);
+    this.collection.unshift(newModel);
+
   },
   template: _.template(tmpl.forms),
 
@@ -80,10 +80,11 @@ module.exports = Backbone.View.extend({
   initialize: function(){
     var self = this;
     var headerHTML = new HeaderView();
-    var formHTML = new FormView();
+
     var movies = new MovieCollection();
     movies.fetch().then(function(data){
       new MovieCollectionView({collection: movies});
+      var formHTML = new FormView({collection: movies});
       self.$el.find('header').html(headerHTML.render().el);
       self.$el.find('#formattach').html(formHTML.render().el);
     });
@@ -135,40 +136,26 @@ module.exports = Backbone.View.extend({
   //events
   events:{
     // 'click .submit': 'submitting',
-    'click .delete': 'deleteMe',
-    'click .usersub': 'newrate',
+
   },
     //delete event
-    deleteMe:function(e){
-      e.preventDefault();
-      var ourId = $(e.target).attr('id');
-      var badMove = this.collection.get(ourId);
-      badMove.destroy();
-    },
 
-    newrate: function(e){
-      e.preventDefault();
-      var ourID = $(e.target).siblings('.delete').attr('id');
-      var updateMod = this.collection.get(ourID);
-      var newRate = $(e.target).siblings('form').children('input[name="userScore"]').val();
-      updateMod.set({rating: newRate});
-      updateMod.save();
-      this.$el.find('input[type="usersRate"]').val('');
-    },
 
-  //addOne
   addOne:function(movieModel){
     var modelView = new MovieModelView({model: movieModel});
     this.$el.find('#mvattach').append(modelView.render().el);
   },
-  //addAll
+
   addAll: function(){
+    this.$el.find('#mvattach').html('');
   _.each(this.collection.models, this.addOne, this);
 },
 
-  //initialize
+
   initialize: function(){
     this.addAll();
+    this.listenTo(this.collection, 'change', this.addAll);
+    this.listenTo(this.collection, 'remove', this.addAll);
   }
 
 
@@ -240,6 +227,7 @@ var _ = require('underscore');
 var $ = require('jquery');
 var tmpl = require('./templates');
 Backbone.$ = $;
+var MovieCollectionView = require('./moviecollectionview');
 
 module.exports = Backbone.View.extend({
 
@@ -249,6 +237,39 @@ module.exports = Backbone.View.extend({
   className: 'col-md-12 movieContainer',
   //template
   template: _.template(tmpl.animovies),
+  //add events to this, such as your edit and delete;
+  events:{
+    'click .delete': 'deleteMe',
+    'click .usersub': 'newrate',
+
+
+
+
+  },
+
+  deleteMe:function(e){
+    e.preventDefault();
+    this.model.collection.remove(this.model);
+    this.model.destroy();
+
+  },
+
+
+// move this to movie model view.
+
+
+  newrate: function(e){
+    e.preventDefault();
+    var newRate = this.$el.find('input[name="userScore"]').val();
+    this.model.set({rating: newRate});
+    this.model.save();
+    this.$el.find('input[type="usersRate"]').val('');
+  },
+
+
+
+
+
   //render
   render: function(){
     var ourHTML = this.template(this.model.toJSON());
@@ -263,7 +284,7 @@ module.exports = Backbone.View.extend({
 
 });
 
-},{"./templates":12,"backbone":9,"jquery":10,"underscore":11}],9:[function(require,module,exports){
+},{"./moviecollectionview":6,"./templates":12,"backbone":9,"jquery":10,"underscore":11}],9:[function(require,module,exports){
 (function (global){
 //     Backbone.js 1.2.3
 
